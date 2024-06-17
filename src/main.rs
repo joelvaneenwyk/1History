@@ -84,7 +84,7 @@ fn main() {
                 buf,
                 "{} {} [{}:{}] {}",
                 chrono::Local::now().format("%Y-%m-%dT%H:%M:%S.%3f"),
-                buf.default_styled_level(record.level()),
+                buf.default_level_style(record.level()),
                 record.file().unwrap_or("unknown"),
                 record.line().unwrap_or(0),
                 record.args()

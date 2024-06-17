@@ -98,7 +98,7 @@ pub fn detect_history_files() -> Vec<String> {
 
 fn join_path(mut base: PathBuf, rest: &str) -> String {
     base.push(rest);
-    base.into_os_string().into_string().unwrap()
+    base.into_os_string().into_string().unwrap().replace('\\', "/")
 }
 
 fn default_location(filename: &str) -> String {
