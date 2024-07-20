@@ -9,3 +9,6 @@
 onehistory
 *zip
 *zip.sha256sum
+
+.task/
+.git/

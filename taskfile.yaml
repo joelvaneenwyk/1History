@@ -12,6 +12,10 @@
 
 version: "3"
 
+vars:
+  APP_NAME: 1History
+  EXE_NAME: onehistory
+
 tasks:
   default:
     cmds:
@@ -22,6 +26,7 @@ tasks:
       - cmd: cargo run -- serve
 
   publish:
+    deps: [org-to-markdown]
     cmds:
       - cmd: cargo publish --registry github --token $(CARGO_REGISTRY_TOKEN)
 
@@ -34,16 +39,59 @@ tasks:
         silent: true
         ignore_error: true
   
+  org-to-markdown:
+    cmds:
+      - cmd: pandoc -f org -t markdown README.org -o README.md
+
+  clean:
+    status:
+      - test ! -f {{.APP_NAME}}*zip
+      - test ! -f {{.APP_NAME}}*zip.sha256sum
+      - test ! -f {{.EXE_NAME}}
+    cmds:
+      - cmd: >-
+          rm -rf
+          {{.APP_NAME}}*zip 
+          {{.APP_NAME}}*zip.sha256sum 
+          "{{.EXE_NAME}}"
+        platforms: [linux, darwin]
+
   release-arm64:
+    deps: [org-to-markdown]
+    vars:
+      VERSION:
+        sh: grep version Cargo.toml | head -1 | awk '{print $3}' | tr -d '"'
+      ARCHIVE_NAME: '{{.APP_NAME}}_v{{.VERSION}}_aarch64-apple-darwin.zip'
+      ARCHIVE_HASH_NAME: '{{.ARCHIVE_NAME}}.sha256sum'
+      ARCHIVE_PATH: '{{joinPath .TASKFILE_DIR .ARCHIVE_NAME}}'
+      ARCHIVE_HASH_PATH: '{{joinPath .TASKFILE_DIR .ARCHIVE_HASH_NAME}}'
+    status:
+      - test -f "{{.ARCHIVE_PATH}}"
+      - test -f "{{.ARCHIVE_HASH_PATH}}"
+    preconditions:
+      - zip --version
+      - cp --version
+      - cargo --version
+      - sha256sum --version
+    sources:
+      - README.org
+      - Cargo.toml
+      - src/**
+    generates:
+      - "{{.ARCHIVE_PATH}}"
+      - "{{.ARCHIVE_PATH}}.sha256sum"
     cmds:
       # run this on m1-based macOS
-      - cmd: | # shell
-          set -ex
-
-          v=$(grep version Cargo.toml | head -1 | awk '{print $3}' | tr -d '"')
-
-          rm -rf 1History*zip 1History*zip.sha256sum
+      - task: clean
+      - cmd: |
           cargo build --release
+      - cmd: |
           cp -f target/release/onehistory .
-          zip 1History_v"${v}"_aarch64-apple-darwin.zip onehistory README.org
-          sha256sum 1History_v"${v}"_aarch64-apple-darwin.zip > 1History_v"${v}"_aarch64-apple-darwin.zip.sha256sum
+        platforms: [linux, darwin]
+      - cmd: |
+          zip "{{.ARCHIVE_PATH}}" {{.EXE_NAME}} README.md
+        platforms: [linux, darwin]
+      - cmd: |
+          sha256sum "{{.ARCHIVE_PATH}}" > "{{.ARCHIVE_PATH}}.sha256sum"
+        platforms: [linux, darwin]
+
