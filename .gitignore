@@ -1,4 +1,10 @@
-/target
+#
+# 1History | Ignore list
+#
+
+/target/
+/.idea/
+
 .DS_Store
 onehistory
 *zip
