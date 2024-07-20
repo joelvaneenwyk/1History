@@ -1,0 +1,8 @@
+version: "0.2"
+ignorePaths: []
+dictionaryDefinitions:
+  - name: 1history
+    path: .github/config/1history.dict
+    addWords: true
+dictionaries:
+  - 1history
