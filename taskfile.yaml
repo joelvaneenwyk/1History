@@ -1,0 +1,39 @@
+#!/usr/bin/env task
+# yaml-language-server: $schema=https://taskfile.dev/schema.json
+#
+# See https://taskfile.dev/installation/ for install instructions.
+#
+#   $> brew install go-task/tap/go-task
+#   $> scoop install task
+#   $> pkgx task
+#   $> sudo snap install task --classic
+#
+# cspell:ignore pkgx
+
+version: "3"
+
+tasks:
+  default:
+    cmds:
+      - task: serve
+
+  release-arm64:
+    cmds:
+      - cmd: ./release-arm64.sh
+
+  serve:
+    cmds:
+      - cmd: cargo run -- serve
+
+  publish:
+    cmds:
+      - cmd: cargo publish --registry github --token $(CARGO_REGISTRY_TOKEN)
+
+  git-clean:
+    vars:
+      CLOSE_STDIN: '{{if eq OS "windows"}}<nul{{else}}0<&-{{end}}'
+    cmds:
+      - cmd: git add .
+      - cmd: git clean -xfd {{.CLOSE_STDIN}}
+        silent: true
+        ignore_error: true
