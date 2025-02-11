@@ -5,7 +5,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 
 /** @type {import('webpack').Configuration} */
 const config = {
-    entry: './src/main.mjs',
+    entry: './src/main.js',
     output: {
         scriptType: 'module',
         filename: 'main.js',
