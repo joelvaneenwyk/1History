@@ -70,7 +70,7 @@ impl Server {
             .select_visits(start, end, keyword.clone())
             .map_err(ServerError::from)?;
 
-        let asset = Asset::get("details.html").unwrap();
+        let asset = Asset::get("details.html.j2").unwrap();
         let index_tmpl: &str =
             std::str::from_utf8(&asset.data).map_err(|e| ServerError::from(Error::from(e)))?;
         let mut env = Environment::new();
@@ -132,7 +132,7 @@ impl Server {
             .context("domain_top100")
             .map_err(ServerError::from)?;
 
-        let asset = Asset::get("index.html").unwrap();
+        let asset = Asset::get("index.html.j2").unwrap();
         let index_tmpl: &str =
             std::str::from_utf8(&asset.data).map_err(|e| ServerError::from(Error::from(e)))?;
         let mut env = Environment::new();
