@@ -22,6 +22,13 @@ import { LabelLayout, UniversalTransition } from 'echarts/features';
 // Note that including the CanvasRenderer or SVGRenderer is a required step
 import { CanvasRenderer } from 'echarts/renderers';
 
+import {$} from 'jquery';
+import moment from 'moment';
+import underscore from 'underscore';
+import * as bootstrap from 'bootstrap';
+import daterangepicker from 'daterangepicker';
+export { $, moment, underscore, bootstrap, daterangepicker };
+
 export function configChart(dailyVisits, titleTop100, domainTop100, keyword) {
   // Register the required components
   echarts.use([
