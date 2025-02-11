@@ -12,3 +12,5 @@ onehistory
 
 .task/
 .git/
+
+node_modules/
